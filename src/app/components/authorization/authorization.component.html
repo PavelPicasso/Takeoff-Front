@@ -1,0 +1,29 @@
+<form class="authorization-form" [formGroup]="form">
+    <div class="container">
+        <h2>Login</h2>
+
+        <mat-form-field class="fields" appearance="fill">
+            <mat-label>Email</mat-label>
+            <input type="email" matInput formControlName="email"  placeholder="Ex. pat@example.com" required>
+      
+            <mat-error *ngIf="form.get('email')?.hasError('email') && !form.get('email')?.hasError('required')">
+                Please enter a valid email address
+            </mat-error>
+      
+            <mat-error *ngIf="form.get('email')?.hasError('required')">
+                Email is <strong>required</strong>
+            </mat-error>
+        </mat-form-field>
+      
+        <mat-form-field class="fields" appearance="fill">
+            <mat-label>Password</mat-label>
+            <input type="password" matInput formControlName="password" placeholder="Enter your password" required>
+
+            <mat-error *ngIf="form.get('password')?.hasError('required')">
+                Password is <strong>required</strong>
+            </mat-error>
+        </mat-form-field>
+      
+        <button mat-raised-button class="btn-primary" (click)="signIn()">Login</button>
+    </div>
+</form>
