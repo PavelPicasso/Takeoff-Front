@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 })
 export class AuthorizationComponent implements OnInit {
   public form: FormGroup = new FormGroup('', []);
+  hide = true;
   
   constructor(
     private formBuilder: FormBuilder,

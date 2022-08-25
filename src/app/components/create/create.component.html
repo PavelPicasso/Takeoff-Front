@@ -1,0 +1,55 @@
+<h1 mat-dialog-title>
+    <span>{{data.modalName}}</span>
+    
+    <button mat-button class="btn" (click)="close()">
+        <mat-icon>close</mat-icon>
+    </button>
+</h1>
+
+<form mat-dialog-content [formGroup]="form">
+    <mat-form-field>
+        <input matInput [(ngModel)]="createFirstName" formControlName="firstName" placeholder="First name" required>
+        
+        <mat-error *ngIf="form.get('firstName')?.hasError('required')">
+            &#171;First name&#187; is <strong>required</strong>
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput [(ngModel)]="createMiddleName" formControlName="middleName"  placeholder="Middle name" required>
+        
+        <mat-error *ngIf="form.get('middleName')?.hasError('required')">
+            &#171;Middle name&#187; is <strong>required</strong>
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput [(ngModel)]="createLastName" formControlName="lastName"  placeholder="Last name" required>
+        
+        <mat-error *ngIf="form.get('lastName')?.hasError('required')">
+            &#171;Last name&#187; is <strong>required</strong>
+        </mat-error>
+    </mat-form-field>
+
+    <div class="social-component" *ngFor="let social of socialNetworks; let i=index;trackBy: trackByFn;">
+        <mat-form-field appearance="outline">            
+            <input matInput [(ngModel)]="socialNetworks[i].url" [ngModelOptions]="{standalone: true}" value="{{social.url}}" placeholder="Social url">
+            <mat-icon matSuffix (click)="clearUrlSocial(i)">close</mat-icon>
+
+            <mat-select [(ngModel)]="socialNetworks[i].social" [ngModelOptions]="{standalone: true}" value="{{social.social}}">
+                <mat-option value="{{item.social}}" *ngFor="let item of socialNetworks; let i=index;trackBy: trackByFn;">
+                    {{item.social}}
+                </mat-option>
+            </mat-select>
+       </mat-form-field>
+    </div>
+
+    <button mat-button type="button" class="addSocial">
+        <mat-icon>add</mat-icon>
+        Add Social Media
+    </button>
+</form>
+
+<div mat-dialog-actions class="saveContainer">
+    <button mat-button class="saveClient" (click)="save()" [disabled]="!form.valid">Save</button>
+</div>

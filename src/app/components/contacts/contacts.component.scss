@@ -1,0 +1,54 @@
+mat-toolbar {
+    background: #3aafda;
+    color: #fff;
+    height: 70px;
+    font-size: 16px;
+
+    .logo {
+        flex: 1;
+    }
+     
+    mat-form-field {
+         width: 400px;
+    }
+     
+    mat-form-field input::placeholder {
+         color: #fff;
+    }
+     
+    .logout {
+         display: flex;
+         flex: 1;
+         flex-direction: row;
+         align-items: center;
+         justify-content: flex-end;
+    }
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    padding: 50px;
+
+    h3 {
+        margin: 24px;
+        margin-bottom: 12px;
+    }
+
+    table {
+        width: 100%;
+    }
+
+    .mat-column-id {
+        width: 60px;
+    }
+    
+    th.mat-sort-header-sorted {
+        color: black;
+    }
+
+    .disclaimer {
+        border: 0;
+        padding-left: 8px;
+    }
+}

@@ -1,1 +1,96 @@
-<p>contacts works!</p>
+<header>
+    <mat-toolbar>
+        <span class="logo">Logo</span>
+        
+        <mat-form-field appearance="standard">
+            <input matInput (keyup)="applyFilter($event)" placeholder="Filter">
+        </mat-form-field>
+    
+
+        <div class="logout">
+            <span>Hello Tom</span>
+            <button mat-icon-button (click)="logout()">
+                <mat-icon>logout</mat-icon>
+            </button>
+        </div>
+    </mat-toolbar>
+</header>
+
+<main>
+    <div class="mat-elevation-z8">
+        <h3>Client</h3>
+
+        <table mat-table [dataSource]="dataSource" matSort (matSortChange)="announceSortChange($event)" class="mat-elevation-z8">        
+            <ng-container matColumnDef="id">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by id">ID</th>
+                <td mat-cell *matCellDef="let row">{{row.id}}</td>
+            </ng-container>
+    
+            <ng-container matColumnDef="firstName">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by firstName">First Name</th>
+                <td mat-cell *matCellDef="let row">{{row.firstName}}</td>
+            </ng-container>
+    
+            <ng-container matColumnDef="middleName">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by middleName">Middle Name</th>
+                <td mat-cell *matCellDef="let row">{{row.middleName}}</td>
+            </ng-container>
+    
+            <ng-container matColumnDef="lastName">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by lastName">Last Name</th>
+                <td mat-cell *matCellDef="let row">{{row.lastName}}</td>
+            </ng-container>
+    
+            <ng-container matColumnDef="dateTimeCreation">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by dateTimeCreation">Date And Time Creation</th>
+                <td mat-cell *matCellDef="let row">
+                    {{row.dateTimeCreation[0]}}
+                    <span>{{row.dateTimeCreation[1]}}</span>
+                </td>
+            </ng-container>
+    
+            <ng-container matColumnDef="lastChange">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by lastChange">Last Change</th>
+                <td mat-cell *matCellDef="let row">
+                    {{row.lastChange[0]}}
+                    <span>{{row.lastChange[1]}}</span>
+                </td>
+            </ng-container>
+    
+            <ng-container matColumnDef="communication">
+                <th mat-header-cell *matHeaderCellDef>Communication</th>
+                <td mat-cell *matCellDef="let row">
+                    <span *ngFor="let item of row.communication">
+                        <mat-icon aria-hidden="false" aria-label="Example home icon">{{item.social}}</mat-icon>
+                    </span>
+                </td>
+            </ng-container>
+    
+            <ng-container matColumnDef="options">
+                <th mat-header-cell *matHeaderCellDef>Options</th>
+                <td mat-cell *matCellDef="let row">
+                    <button (click)="deleteRecord(row.id)">Delete</button>
+                    <button (click)="editRecord(row)">Edit</button>
+                </td>
+            </ng-container>
+    
+            <ng-container matColumnDef="disclaimer">
+                <td mat-footer-cell *matFooterCellDef class="disclaimer">
+                    <button mat-button (click)="addRecord()">
+                        <mat-icon>person_add</mat-icon>
+                        Add Client
+                    </button>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            <tr mat-footer-row *matFooterRowDef="['disclaimer']"></tr>
+        </table>
+    
+        <mat-paginator [pageSizeOptions]="[5, 10, 20]"
+                     showFirstLastButtons 
+                     aria-label="Select page of periodic elements">
+      </mat-paginator>
+    </div>
+</main>
