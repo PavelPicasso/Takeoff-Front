@@ -5,27 +5,14 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
+import { InputSocial, PeriodicElement } from 'src/app/models/client';
 import { CreateComponent } from '../create/create.component';
 
-export interface InputSocial {
-  social: string,
-  url: string
-}
 
-export interface PeriodicElement {
-  id: number;
-  firstName: string;
-  middleName: string;
-  lastName: string;
-  dateTimeCreation: string[];
-  lastChange: string[];
-  communication: InputSocial[];
-}
-
-const ELEMENT_DATA: PeriodicElement[] = [
+let ELEMENT_DATA: PeriodicElement[] = [
   {id: 0, firstName: 'Ankit', middleName: 'Kumar', lastName: 'Sharma', dateTimeCreation: ['21.02.2021', '15:41'], lastChange: ['21.02.2021', '12:41'], communication: []},
-  {id: 1, firstName: 'Mayank', middleName: 'Singh', lastName: 'Sharma', dateTimeCreation: ['1.02.2021', '22:41'], lastChange: ['21.02.2021', '12:41'], communication: [{social: 'facebook', url: 'www'}, {social: 'phone', url: 'wqe'}, {social: 'email', url: 'www'}]},
-  {id: 2, firstName: 'Aman', middleName: 'Singh', lastName: 'Rawat', dateTimeCreation: ['21.03.2021', '12:41'], lastChange: ['21.02.2021', '12:41'], communication: [{social: 'email', url: 'www'}, {social: 'phone', url: 'wqe'}]}
+  {id: 1, firstName: 'Mayank', middleName: 'Singh', lastName: 'Sharma', dateTimeCreation: ['01.02.2021', '22:41'], lastChange: ['21.02.2021', '12:41'], communication: [{social: 'facebook', url: 'https://yandex.ru/'}, {social: 'phone', url: '1-800-123-4567'}, {social: 'email', url: 'email@email.ru'}]},
+  {id: 2, firstName: 'Aman', middleName: 'Singh', lastName: 'Rawat', dateTimeCreation: ['21.03.2021', '12:41'], lastChange: ['21.02.2021', '12:41'], communication: [{social: 'email', url: 'email@email'}, {social: 'phone', url: '050-XXXX-XXXX'}]}
 ];
 
 /**
@@ -39,8 +26,6 @@ const ELEMENT_DATA: PeriodicElement[] = [
 export class ContactsComponent implements AfterViewInit {
   public displayedColumns: string[] = ['id', 'firstName', 'middleName', 'lastName', 'dateTimeCreation', 'lastChange', 'communication', 'options'];
   public dataSource = new MatTableDataSource(ELEMENT_DATA);
-  
-  dataToDisplay = [...ELEMENT_DATA];
 
   constructor(
     private _liveAnnouncer: LiveAnnouncer,
@@ -91,8 +76,8 @@ export class ContactsComponent implements AfterViewInit {
   }
 
   deleteRecord(recordId: number): void {
-    this.dataToDisplay = this.dataToDisplay.slice(0, -1);
-    this.dataSource = new MatTableDataSource(this.dataToDisplay);
+    ELEMENT_DATA = ELEMENT_DATA.filter(item => item.id !== recordId);
+    this.dataSource = new MatTableDataSource(ELEMENT_DATA);
   }
 
   addRecord(): void {
@@ -105,7 +90,7 @@ export class ContactsComponent implements AfterViewInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        ELEMENT_DATA.push(result)
+        ELEMENT_DATA.push(result);
         this.dataSource = new MatTableDataSource(ELEMENT_DATA);
       }
     });
@@ -122,5 +107,22 @@ export class ContactsComponent implements AfterViewInit {
 
   logout(): void {
     this.router.navigate(['login']);
+  }
+
+  getHint(data: InputSocial): string {
+    return `${data.social}: ${data.url}`;
+  }
+
+  getHref(data: InputSocial): string {
+    switch(data.social) {
+      case 'email':
+        return `mailto:${data.url}`;
+    
+      case 'phone':
+        return `tel:+${data.url}`;
+    
+      default:
+        return data.url;
+    }
   }
 }

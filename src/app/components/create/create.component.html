@@ -8,7 +8,7 @@
 
 <form mat-dialog-content [formGroup]="form">
     <mat-form-field>
-        <input matInput [(ngModel)]="createFirstName" formControlName="firstName" placeholder="First name" required>
+        <input matInput formControlName="firstName" placeholder="First name" required>
         
         <mat-error *ngIf="form.get('firstName')?.hasError('required')">
             &#171;First name&#187; is <strong>required</strong>
@@ -16,7 +16,7 @@
     </mat-form-field>
 
     <mat-form-field>
-        <input matInput [(ngModel)]="createMiddleName" formControlName="middleName"  placeholder="Middle name" required>
+        <input matInput formControlName="middleName"  placeholder="Middle name" required>
         
         <mat-error *ngIf="form.get('middleName')?.hasError('required')">
             &#171;Middle name&#187; is <strong>required</strong>
@@ -24,31 +24,35 @@
     </mat-form-field>
 
     <mat-form-field>
-        <input matInput [(ngModel)]="createLastName" formControlName="lastName"  placeholder="Last name" required>
+        <input matInput formControlName="lastName" placeholder="Last name" required>
         
         <mat-error *ngIf="form.get('lastName')?.hasError('required')">
             &#171;Last name&#187; is <strong>required</strong>
         </mat-error>
     </mat-form-field>
 
-    <div class="social-component" *ngFor="let social of socialNetworks; let i=index;trackBy: trackByFn;">
-        <mat-form-field appearance="outline">            
-            <input matInput [(ngModel)]="socialNetworks[i].url" [ngModelOptions]="{standalone: true}" value="{{social.url}}" placeholder="Social url">
-            <mat-icon matSuffix (click)="clearUrlSocial(i)">close</mat-icon>
+    <div class="social-component" *ngFor="let network of networksFieldAsFormArray.controls; let i = index; trackBy: trackByFn;" formArrayName='socialNetworks'>
+        <mat-form-field appearance="outline" [formGroupName]="i">            
+            <input matInput formControlName="url" placeholder="Social url">
+            <mat-icon class="deleteSocial" matSuffix (click)="remove(i)">close</mat-icon>
 
-            <mat-select [(ngModel)]="socialNetworks[i].social" [ngModelOptions]="{standalone: true}" value="{{social.social}}">
-                <mat-option value="{{item.social}}" *ngFor="let item of socialNetworks; let i=index;trackBy: trackByFn;">
-                    {{item.social}}
+            <mat-select formControlName="social" placeholder="Social name">
+                <mat-option value="{{name}}" *ngFor="let name of socialName; let i = index; trackBy: trackByFn;">
+                    {{name}}
                 </mat-option>
             </mat-select>
+
+            <mat-error *ngIf="errorUrlSocialNetworks(i)">
+                &#171;Social url&#187; is <strong>required</strong>
+            </mat-error>
        </mat-form-field>
     </div>
-
-    <button mat-button type="button" class="addSocial">
-        <mat-icon>add</mat-icon>
-        Add Social Media
-    </button>
 </form>
+
+<button mat-button type="button" class="addSocial" *ngIf="this.form.get('socialNetworks')?.value.length < 5" (click)="addControl()">
+    <mat-icon>add</mat-icon>
+    Add Social Media
+</button>
 
 <div mat-dialog-actions class="saveContainer">
     <button mat-button class="saveClient" (click)="save()" [disabled]="!form.valid">Save</button>

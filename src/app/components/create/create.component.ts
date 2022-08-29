@@ -1,20 +1,8 @@
-import { DatePipe, formatDate } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { InputData, InputSocial } from 'src/app/models/client';
 import { DateService } from 'src/app/service/date.service';
-
-export interface InputSocial {
-  social: string,
-  url: string
-}
-
-export interface InputData {
-  firstName: string,
-  middleName: string,
-  lastName: string,
-  social: InputSocial[]
-}
 
 @Component({
   selector: 'app-create',
@@ -24,9 +12,8 @@ export interface InputData {
 export class CreateComponent implements OnInit {
   public form: FormGroup = new FormGroup('', []);
   
-  createFirstName = '';
-  createMiddleName = '';
-  createLastName = '';
+  createId: number = 0;
+  socialName: string[] = ['facebook', 'phone', 'email', 'feedback'];
   infoClients: InputData | undefined;
 
 
@@ -40,37 +27,66 @@ export class CreateComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.createFirstName = this.data.row.firstName;
-    this.createMiddleName = this.data.row.middleName;
-    this.createLastName = this.data.row.lastName;
-    this.socialNetworks = this.data.row.communication;
+    this.createId = this.data.row.id || 0;
+    console.log(this.data.row);
 
     this.form = this.formBuilder.group({
-      firstName: new FormControl('', Validators.required),
-      middleName: new FormControl('', Validators.required),
-      lastName: new FormControl('', Validators.required)
+      firstName: new FormControl(this.data.row.firstName || '', Validators.required),
+      middleName: new FormControl(this.data.row.middleName || '', Validators.required),
+      lastName: new FormControl(this.data.row.lastName || '', Validators.required),
+      socialNetworks: this.formBuilder.array(
+        this.data.row.communication || [],
+        this.networks()
+      )
     });
+
+    console.log(this.form.get('socialNetworks')?.value);
+  }
+
+  get networksFieldAsFormArray(): any {
+    return this.form.get('socialNetworks') as FormArray;
+  }
+
+  get networkText() {
+    return this.form.get('socialNetworks')?.value;
+  }
+
+  networks(): any {
+    return this.formBuilder.group({
+      url: this.formBuilder.control('', Validators.required),
+      social: this.formBuilder.control('feedback', Validators.required)
+    });
+  }
+
+  addControl(): void {
+    this.networksFieldAsFormArray.push(this.networks());
+  }
+
+  remove(i: number): void {
+    this.networksFieldAsFormArray.removeAt(i);
   }
 
   trackByFn(index: number, item: any): number {
     return item.id!;
   }
 
+  errorUrlSocialNetworks(i: number): boolean {
+    return this.form.get('socialNetworks')?.value[i]?.url.length === 0;
+  }
+
   close(): void {
     this.dialogRef.close();
   }
 
-  clearUrlSocial(index: number ): void {
-    this.socialNetworks[index].url = '';
-  }
-
   save(): void {
-    if (this.form.valid) {    
+    if (this.form.valid) {
+      const genId = this.data.modalName === 'Edit Client' ? this.createId : Math.floor(Math.random() * (444 - 0) + 0); // created in the db
+
       const createData = {
-        id: this.data.row.id,
-        firstName: this.createFirstName,
-        middleName: this.createMiddleName,
-        lastName: this.createLastName,
+        id: genId,
+        firstName: this.form.value.firstName,
+        middleName: this.form.value.middleName,
+        lastName: this.form.value.lastName,
         dateTimeCreation: [
           this.dateService.getDateYMD(),
           this.dateService.getTimeHM()
@@ -78,9 +94,11 @@ export class CreateComponent implements OnInit {
         lastChange: [
           this.dateService.getDateYMD(),
           this.dateService.getTimeHM()
-        ]
+        ],
+        communication: this.form.value.socialNetworks
       };
-  
+      
+      console.log(this.form.value.socialNetworks);
       this.dialogRef.close(createData);
     }
   }

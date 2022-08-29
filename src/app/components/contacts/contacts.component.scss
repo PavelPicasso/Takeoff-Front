@@ -47,8 +47,130 @@ main {
         color: black;
     }
 
+    .date {
+        margin-right: 5px;
+    }
+
+    .time {
+        color: rgba(0, 0, 0, 0.54);
+    }
+
+    .info {
+        position: relative;
+        z-index: 2;
+
+        a {
+            color: rgba(0, 0, 0, 0.87);;
+        }
+        
+        &::before, &::after {
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        &::after {
+            content:" ";
+            position: absolute; bottom: 150%; left: 50%;
+            margin-left: -7px;
+            width: 0;
+            border-top: 7px solid rgba(61,61,61,0.95);
+            border-right: 7px solid transparent;
+            border-left: 7px solid transparent;    
+            font-size: 0;
+            line-height: 0;
+        }
+
+        &::before{
+            content: attr(data-info);
+            position: absolute; bottom: 150%; left: 50%;
+            margin-bottom: 5px;
+            margin-left: -80px;
+            padding: 7px;
+            min-width: 200px;
+            -webkit-border-radius: 3px;
+            -moz-border-radius: 3px;
+            border-radius: 3px;
+            background: rgba(61,61,61,0.95);
+            color: #fff;    
+            text-align: center;
+            font-size: 14px;
+            line-height: 1.2;
+        }
+
+        &:hover:before, &:hover:after {
+            visibility: visible;
+            opacity: 1;
+        }
+    }
+
     .disclaimer {
         border: 0;
         padding-left: 8px;
+    }
+
+    td:last-child {
+        padding-right: 0;
+    }
+
+    .btn {
+        position: relative;
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 5px;
+        border: 0;
+        color: #fff;
+        text-transform: uppercase;
+        font-size: 16px;
+        letter-spacing: 1px;
+        transition: all 0.3s;
+        overflow: hidden;
+        z-index: 1;
+
+        &:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #0cf;
+            border-radius: 5px;
+            z-index: -2;
+        }
+
+        &:before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0%;
+            height: 100%;
+            background-color: darken(#0cf, 15%);
+            transition: all .3s;
+            border-radius: 5px;
+            z-index: -1;
+        }
+
+        &:hover {
+            color: #fff;
+            cursor: pointer;
+
+            &:before {
+              width: 100%;
+            }
+        }
+    }
+
+    .red {
+        margin-right: 15px;
+
+        &:after {
+            background-color: #e74c3c;
+        }
+
+        &:before {
+            background-color: darken(#e74c3c, 15%);
+        }
     }
 }

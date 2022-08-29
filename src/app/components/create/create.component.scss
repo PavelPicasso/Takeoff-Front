@@ -1,3 +1,9 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    max-height: 600px;
+}
+
 h1 {
     display: flex;
     flex-direction: row;
@@ -15,9 +21,18 @@ form {
         width: 100%;
     }
 
-    .addSocial {
-        align-self: center;
+    .social-component .mat-form-field-appearance-outline .mat-form-field-wrapper {
+        margin: 13px 0;
     }
+}
+
+.deleteSocial {
+    cursor: pointer;
+}
+
+.addSocial {
+    width: 100%;
+    align-self: center;
 }
 
 .saveContainer {
