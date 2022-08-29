@@ -8,7 +8,8 @@
 
 <form mat-dialog-content [formGroup]="form">
     <mat-form-field>
-        <input matInput formControlName="firstName" placeholder="First name" required>
+        <input matInput formControlName="firstName" maxlength="30" placeholder="First name" required>
+        <mat-hint align="end">{{form.get('firstName')?.value?.length || 0}}/30</mat-hint>
         
         <mat-error *ngIf="form.get('firstName')?.hasError('required')">
             &#171;First name&#187; is <strong>required</strong>
@@ -16,7 +17,8 @@
     </mat-form-field>
 
     <mat-form-field>
-        <input matInput formControlName="middleName"  placeholder="Middle name" required>
+        <input matInput formControlName="middleName" maxlength="30" placeholder="Middle name" required>
+        <mat-hint align="end">{{form.get('middleName')?.value?.length || 0}}/30</mat-hint>
         
         <mat-error *ngIf="form.get('middleName')?.hasError('required')">
             &#171;Middle name&#187; is <strong>required</strong>
@@ -24,7 +26,8 @@
     </mat-form-field>
 
     <mat-form-field>
-        <input matInput formControlName="lastName" placeholder="Last name" required>
+        <input matInput formControlName="lastName" maxlength="30" placeholder="Last name" required>
+        <mat-hint align="end">{{form.get('lastName')?.value?.length || 0}}/30</mat-hint>
         
         <mat-error *ngIf="form.get('lastName')?.hasError('required')">
             &#171;Last name&#187; is <strong>required</strong>

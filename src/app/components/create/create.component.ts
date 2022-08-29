@@ -28,33 +28,27 @@ export class CreateComponent implements OnInit {
 
   ngOnInit(): void {
     this.createId = this.data.row.id || 0;
-    console.log(this.data.row);
 
     this.form = this.formBuilder.group({
-      firstName: new FormControl(this.data.row.firstName || '', Validators.required),
-      middleName: new FormControl(this.data.row.middleName || '', Validators.required),
-      lastName: new FormControl(this.data.row.lastName || '', Validators.required),
-      socialNetworks: this.formBuilder.array(
-        this.data.row.communication || [],
-        this.networks()
-      )
+      firstName: [this.data.row.firstName || '', Validators.required],
+      middleName: [this.data.row.middleName || '', Validators.required],
+      lastName: [this.data.row.lastName || '', Validators.required],
+      socialNetworks: this.formBuilder.array(this.data && this.data.row.communication ? this.data.row.communication.map((x: InputSocial) =>
+        this.networks(x)
+      ) : []),
     });
-
-    console.log(this.form.get('socialNetworks')?.value);
   }
 
   get networksFieldAsFormArray(): any {
     return this.form.get('socialNetworks') as FormArray;
   }
 
-  get networkText() {
-    return this.form.get('socialNetworks')?.value;
-  }
+  networks(data: any = null): FormGroup {
+    data = {url:'', social: 'feedback', ...data}
 
-  networks(): any {
     return this.formBuilder.group({
-      url: this.formBuilder.control('', Validators.required),
-      social: this.formBuilder.control('feedback', Validators.required)
+      url: this.formBuilder.control(data.url, Validators.required),
+      social: this.formBuilder.control(data.social, Validators.required),
     });
   }
 
