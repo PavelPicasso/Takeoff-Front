@@ -13,4 +13,8 @@ export class ContactsService {
   load(): Observable<Contact[]> {
     return this.http.get<Contact[]>('http://localhost:3000/contacts');
   }
+
+  loadPage(currentPage: number, limit: number): Observable<Contact[]> {
+    return this.http.get<Contact[]>(`http://localhost:3000/contacts?_page=${currentPage}&_limit=${limit}`);
+  }
 }

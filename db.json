@@ -48,6 +48,51 @@
           "value": "050-XXXX-XXXX"
         }
       ]
+    },
+    {
+      "id": 3,
+      "firstName": "Test",
+      "middleName": "Test",
+      "lastName": "Test",
+      "createdAt": ["2021.03.21", "12:41"],
+      "updatedAt": ["2021.02.21", "12:41"],
+      "communication": [
+        {
+          "type": "email",
+          "value": "email@email"
+        },
+        {
+          "type": "phone",
+          "value": "050-XXXX-XXXX"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "firstName": "Test1",
+      "middleName": "Test1",
+      "lastName": "Test1",
+      "createdAt": ["2021.03.21", "12:41"],
+      "updatedAt": ["2021.02.21", "12:41"],
+      "communication": []
+    },
+    {
+      "id": 5,
+      "firstName": "Test2",
+      "middleName": "Test2",
+      "lastName": "Test2",
+      "createdAt": ["2021.03.21", "12:41"],
+      "updatedAt": ["2021.02.21", "12:41"],
+      "communication": []
+    },
+    {
+      "id": 6,
+      "firstName": "Test3",
+      "middleName": "Test3",
+      "lastName": "Test3",
+      "createdAt": ["2021.03.21", "12:41"],
+      "updatedAt": ["2021.02.21", "12:41"],
+      "communication": []
     }
   ]
 }

@@ -9,12 +9,11 @@ export class ContactEffects {
 
   constructor(private actions$: Actions, private service: ContactsService) {}
 
-  loadProducts$ = createEffect(() =>
+  loadContacts$ = createEffect(() =>
     this.actions$.pipe(
       ofType(requestLoadContacts),
       switchMap(action =>
         this.service.load().pipe(
-          delay(3000),
           map(data => loadContacts({contacts: data}))
       ))
     )

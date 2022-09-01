@@ -1,7 +1,7 @@
 import { LiveAnnouncer} from '@angular/cdk/a11y';
 import { AfterViewInit, Component, ViewChild, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatPaginator } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
@@ -12,13 +12,9 @@ import { Observable } from 'rxjs';
 import * as fromActions from './store/contacts.actions';
 import * as fromStore from './store/contacts.reducer';
 import * as fromSelector from './store/contacts.selectors';
-
-
-let ELEMENT_DATA: Contact[] = [
-  {id: '0', firstName: 'Ankit', middleName: 'Kumar', lastName: 'Sharma', createdAt: ['2021.02.21', '15:41'], updatedAt: ['2021.02.21', '12:41'], communication: []},
-  {id: '1', firstName: 'Mayank', middleName: 'Singh', lastName: 'Sharma', createdAt: ['2021.02.01', '22:41'], updatedAt: ['2021.02.21', '12:41'], communication: [{type: 'facebook', value: 'https://yandex.ru/'}, {type: 'phone', value: '1-800-123-4567'}, {type: 'email', value: 'email@email.ru'}]},
-  {id: '2', firstName: 'Aman', middleName: 'Singh', lastName: 'Rawat', createdAt: ['2021.03.21', '12:41'], updatedAt: ['2021.02.21', '12:41'], communication: [{type: 'email', value: 'email@email'}, {type: 'phone', value: '050-XXXX-XXXX'}]}
-];
+import { merge, Subject } from 'rxjs';
+import { startWith, switchMap, tap, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { ContactsService } from './service/contacts.service';
 
 /**
  * @title Table with sorting
@@ -30,38 +26,36 @@ let ELEMENT_DATA: Contact[] = [
 })
 export class ContactsComponent implements AfterViewInit {
   public displayedColumns: string[] = ['id', 'firstName', 'middleName', 'lastName', 'createdAt', 'updatedAt', 'communication', 'options'];
-  public dataSource = new MatTableDataSource(ELEMENT_DATA);
-  isLoading$!: Observable<boolean>;
+  public dataSource: MatTableDataSource<Contact> = new MatTableDataSource();
+  
+  isLoading: boolean = true;
+  pageEvent!: PageEvent;
+
+  tableData: Array<Contact> = [];
   error$!: Observable<string | null>;
   contacts$!: Observable<Contact[]>;
+
+  pageSize: number = 5;
+  currentPage: number = 0;
+  pageSizeOptions: number[] = [5, 10, 25, 100];
+  totalRows: number = 0;
 
   constructor(
     private _liveAnnouncer: LiveAnnouncer,
     public dialog: MatDialog,
     private router: Router,
-    private store: Store<fromStore.ContactState>
-  ) {}
+    private store: Store<fromStore.ContactState>,
+    private contactsService: ContactsService
+  ) { }
 
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  ngOnInit(): void {
-    this.store.dispatch(fromActions.requestLoadContacts());
-    
-    
-    this.contacts$ = this.store.select(fromSelector.contacts);
-    this.contacts$.subscribe(contacts => {
-      console.log('contacts', contacts);
-    });
-    // this.isLoading$ = this.store.select(fromSelector.isLoading);
-    // this.error$ = this.store.select(fromSelector.error);
-
-
-    this.store.select(state => state).subscribe(data => {
-      console.log('data', data);
-    });
+  ngOnInit() {
+    this.getAllContacts();
+    this.initDataSource();
   }
-
+  
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
@@ -85,6 +79,37 @@ export class ContactsComponent implements AfterViewInit {
     }
   }
 
+  getAllContacts(): void {
+    this.store.dispatch(fromActions.requestLoadContacts());
+    this.contacts$ = this.store.select(fromSelector.contacts);
+
+    this.contacts$.subscribe(contacts => { this.totalRows = contacts.length; });
+  }
+
+  initDataSource() {
+    this.contactsService.loadPage(1, this.pageSize).subscribe(contacts => {
+      this.tableData = contacts;
+      
+      this.isLoading = !this.isLoading;
+      this.dataSource = new MatTableDataSource(this.tableData);
+    });
+  }
+
+  onPaginateChange(event: PageEvent) {
+    let page = event.pageIndex;
+    let size = event.pageSize;
+
+    page = page +1;
+    this.isLoading = !this.isLoading;
+    
+    this.contactsService.loadPage(page, size).subscribe(contacts => {
+      this.tableData = contacts;
+
+      this.isLoading = !this.isLoading;
+      this.dataSource = new MatTableDataSource(this.tableData);
+    });
+  }
+
   editRecord(row: Contact): void {
     const dialogRef = this.openDialog(
       {
@@ -95,19 +120,19 @@ export class ContactsComponent implements AfterViewInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        const index = ELEMENT_DATA.findIndex(object => {
+        const index = this.tableData.findIndex(object => {
           return object.id === result.id;
         });
-        ELEMENT_DATA[index] = {...ELEMENT_DATA[index], ...result};
+        this.tableData[index] = {...this.tableData[index], ...result};
 
-        this.dataSource = new MatTableDataSource(ELEMENT_DATA);
+        this.dataSource = new MatTableDataSource(this.tableData);
       }
     });
   }
 
   deleteRecord(recordId: string): void {
-    ELEMENT_DATA = ELEMENT_DATA.filter(item => item.id !== recordId);
-    this.dataSource = new MatTableDataSource(ELEMENT_DATA);
+    this.tableData = this.tableData.filter(item => item.id !== recordId);
+    this.dataSource = new MatTableDataSource(this.tableData);
   }
 
   addRecord(): void {
@@ -120,8 +145,8 @@ export class ContactsComponent implements AfterViewInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        ELEMENT_DATA.push(result);
-        this.dataSource = new MatTableDataSource(ELEMENT_DATA);
+        this.tableData.push(result);
+        this.dataSource = new MatTableDataSource(this.tableData);
       }
     });
   }

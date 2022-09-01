@@ -63,7 +63,7 @@ export class CreateComponent implements OnInit {
   }
 
   errorUrlCommunication(i: number): boolean {
-    return this.form.get('communication')?.value[i]?.type.length === 0;
+    return this.form.get('communication')?.value[i];
   }
 
   close(): void {
