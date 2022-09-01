@@ -24,10 +24,14 @@ form {
     .social-component .mat-form-field-appearance-outline .mat-form-field-wrapper {
         margin: 13px 0;
     }
-}
 
-.deleteSocial {
-    cursor: pointer;
+    .mat-select {
+        width: 150px;
+    }
+
+    .deleteSocial {
+        cursor: pointer;
+    }
 }
 
 .addSocial {
@@ -45,8 +49,4 @@ form {
         padding: 10px 64px;
         background-color: #f5f5f5;
     }
-}
-
-.mat-select {
-    width: 150px;
 }

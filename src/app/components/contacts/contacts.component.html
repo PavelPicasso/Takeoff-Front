@@ -3,9 +3,8 @@
         <span class="logo">Logo</span>
         
         <mat-form-field appearance="standard">
-            <input matInput (keyup)="applyFilter($event)" placeholder="Filter">
+            <input matInput (keyup)="applyFilter($event)" placeholder="Global Filter">
         </mat-form-field>
-    
 
         <div class="logout">
             <span>Hello Tom</span>
@@ -18,7 +17,7 @@
 
 <main>
     <div class="mat-elevation-z8">
-        <h3>Client</h3>
+        <h3>Contacts</h3>
 
         <table mat-table [dataSource]="dataSource" matSort (matSortChange)="announceSortChange($event)" class="mat-elevation-z8">        
             <ng-container matColumnDef="id">
@@ -41,19 +40,19 @@
                 <td mat-cell *matCellDef="let row">{{row.lastName}}</td>
             </ng-container>
     
-            <ng-container matColumnDef="dateTimeCreation">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by dateTimeCreation">Date And Time Creation</th>
+            <ng-container matColumnDef="createdAt">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by createdAt">Date And Time Creation</th>
                 <td mat-cell *matCellDef="let row">
-                    <span class="date">{{row.dateTimeCreation[0]}}</span>
-                    <span class="time">{{row.dateTimeCreation[1]}}</span>
+                    <span class="date">{{row.createdAt[0]}}</span>
+                    <span class="time">{{row.createdAt[1]}}</span>
                 </td>
             </ng-container>
     
-            <ng-container matColumnDef="lastChange">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by lastChange">Last Change</th>
+            <ng-container matColumnDef="updatedAt">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by updatedAt">Last Change</th>
                 <td mat-cell *matCellDef="let row">
-                    <span class="date">{{row.lastChange[0]}}</span>
-                    <span class="time">{{row.lastChange[1]}}</span>
+                    <span class="date">{{row.updatedAt[0]}}</span>
+                    <span class="time">{{row.updatedAt[1]}}</span>
                 </td>
             </ng-container>
     
@@ -62,8 +61,8 @@
                 <td mat-cell *matCellDef="let row">
                     <span class="info" *ngFor="let item of row.communication" attr.data-info="{{getHint(item)}}">
                         <a href="{{getHref(item)}}" target="_blank">
-                            <mat-icon aria-hidden="false" aria-label="Example home icon">
-                                {{item.social}}
+                            <mat-icon aria-hidden="false">
+                                {{item.type}}
                             </mat-icon>
                         </a>
                     </span>

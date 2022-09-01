@@ -1,0 +1,53 @@
+{
+  "contacts": [
+    {
+      "id": 0,
+      "firstName": "Ankit",
+      "middleName": "Kumar",
+      "lastName": "Sharma",
+      "createdAt": ["2021.02.21", "15:41"],
+      "updatedAt": ["2021.02.21", "12:41"],
+      "communication": []
+    },
+    {
+      "id": 1,
+      "firstName": "Mayank",
+      "middleName": "Singh",
+      "lastName": "Sharma",
+      "createdAt": ["2021.01.02.", "22:41"],
+      "updatedAt": ["2021.01.21", "12:41"],
+      "communication": [
+        {
+          "type": "facebook",
+          "value": "https://yandex.ru/"
+        },
+        {
+          "type": "phone",
+          "value": "1-800-123-4567"
+        },
+        {
+          "type": "email",
+          "value": "email@email.ru"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "firstName": "Aman",
+      "middleName": "Singh",
+      "lastName": "Rawat",
+      "createdAt": ["2021.03.21", "12:41"],
+      "updatedAt": ["2021.02.21", "12:41"],
+      "communication": [
+        {
+          "type": "email",
+          "value": "email@email"
+        },
+        {
+          "type": "phone",
+          "value": "050-XXXX-XXXX"
+        }
+      ]
+    }
+  ]
+}

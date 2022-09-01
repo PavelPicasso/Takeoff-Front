@@ -1,23 +1,30 @@
 import { NgModule } from '@angular/core';
+import { EffectsModule } from '@ngrx/effects';
+import { HttpClientModule } from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
 import { AppComponent } from './app.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MaterialAngular } from './material.angular';
-import { AppRoutingModule, routingComponents } from './app-routing.module';
-import { CreateComponent } from './components/create/create.component';
+import { AppRoutingModule } from './app-routing.module';
+import { environment } from '../environments/environment';
+import * as fromApp from './core/app.reducer';
+import { reducer } from './core/app.reducer';
 
 @NgModule({
   declarations: [
-    AppComponent,
-    routingComponents,
-    CreateComponent
+    AppComponent
   ],
   imports: [
     BrowserModule,
-    MaterialAngular,
+    AppRoutingModule,
+    HttpClientModule,
     BrowserAnimationsModule,
-    AppRoutingModule
+    StoreModule.forRoot(reducer, {}),
+    EffectsModule.forRoot([]),
+    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production }),
+    StoreModule.forFeature(fromApp.appFeatureKey, fromApp.reducer)
   ],
   providers: [],
   bootstrap: [AppComponent]

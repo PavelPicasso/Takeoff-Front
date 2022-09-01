@@ -1,16 +1,25 @@
 import { NgModule } from "@angular/core";
-import { RouterModule, Routes } from "@angular/router";
+import { PreloadAllModules, RouterModule, Routes } from "@angular/router";
+
 import { AuthorizationComponent } from "./components/authorization/authorization.component";
 import { ContactsComponent } from "./components/contacts/contacts.component";
 
 const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
-    { path: 'login', component: AuthorizationComponent },
-    { path: 'contacts', component: ContactsComponent }
+    {
+        path: 'login',
+        loadChildren: () => import('./components/authorization/authorization.module').then(m => m.AuthorizationModule)
+    },
+    {
+        path: 'contacts',
+        loadChildren: () => import('./components/contacts/contacts.module').then(m => m.ContactsModule)
+    }
 ]
   
 @NgModule({
-    imports: [RouterModule.forRoot(routes)],
+    imports: [RouterModule.forRoot(routes, {
+        preloadingStrategy: PreloadAllModules
+    })],
     exports: [RouterModule]
 })
 

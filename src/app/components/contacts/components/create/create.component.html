@@ -34,25 +34,26 @@
         </mat-error>
     </mat-form-field>
 
-    <div class="social-component" *ngFor="let network of networksFieldAsFormArray.controls; let i = index; trackBy: trackByFn;" formArrayName='socialNetworks'>
+    <div class="social-component" *ngFor="let network of networksFieldAsFormArray.controls; let i = index; trackBy: trackByFn;" formArrayName='communication'>
         <mat-form-field appearance="outline" [formGroupName]="i">            
-            <input matInput formControlName="url" placeholder="Social url">
+            <input matInput formControlName="value" placeholder="Social url">
+            <mat-hint align="end">{{i + 1}}/5</mat-hint>
             <mat-icon class="deleteSocial" matSuffix (click)="remove(i)">close</mat-icon>
 
-            <mat-select formControlName="social" placeholder="Social name">
+            <mat-select formControlName="type" placeholder="Social name">
                 <mat-option value="{{name}}" *ngFor="let name of socialName; let i = index; trackBy: trackByFn;">
                     {{name}}
                 </mat-option>
             </mat-select>
 
-            <mat-error *ngIf="errorUrlSocialNetworks(i)">
+            <mat-error *ngIf="errorUrlCommunication(i)">
                 &#171;Social url&#187; is <strong>required</strong>
             </mat-error>
        </mat-form-field>
     </div>
 </form>
 
-<button mat-button type="button" class="addSocial" *ngIf="this.form.get('socialNetworks')?.value.length < 5" (click)="addControl()">
+<button mat-button type="button" class="addSocial" *ngIf="this.form.get('communication')?.value.length < 5" (click)="addControl()">
     <mat-icon>add</mat-icon>
     Add Social Media
 </button>
