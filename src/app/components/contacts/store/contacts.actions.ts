@@ -18,10 +18,10 @@ export const addContact = createAction(
 
 export const updateContact = createAction(
   '[Contact/API] Update Contact',
-  props<{ contact: Update<Contact> }>()
+  props<{ update: Update<Contact> }>()
 );
 
 export const deleteContact = createAction(
   '[Contact/API] Delete Contact',
-  props<{ id: string }>()
+  props<{ id: number }>()
 );

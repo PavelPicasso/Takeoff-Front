@@ -27,17 +27,15 @@ import { ContactsService } from './service/contacts.service';
 export class ContactsComponent implements AfterViewInit {
   public displayedColumns: string[] = ['id', 'firstName', 'middleName', 'lastName', 'createdAt', 'updatedAt', 'communication', 'options'];
   public dataSource: MatTableDataSource<Contact> = new MatTableDataSource();
-  
-  isLoading: boolean = true;
+  public tableData: Array<Contact> = [];
+  public isLoading: boolean = true;
+
+  contacts$: Observable<Contact[]> = this.store.select(fromSelector.contacts);
+
   pageEvent!: PageEvent;
-
-  tableData: Array<Contact> = [];
-  error$!: Observable<string | null>;
-  contacts$!: Observable<Contact[]>;
-
   pageSize: number = 5;
   currentPage: number = 0;
-  pageSizeOptions: number[] = [5, 10, 25, 100];
+  pageSizeOptions: number[] = [5, 10, 25, 50, 100]; // !!!!!!!!!!!!
   totalRows: number = 0;
 
   constructor(
@@ -52,8 +50,8 @@ export class ContactsComponent implements AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   ngOnInit() {
-    this.getAllContacts();
-    this.initDataSource();
+    this.getStore();
+    this.initDataSource(); // !!!!!!!!!!!!!!!!!!!
   }
   
   ngAfterViewInit(): void {
@@ -79,9 +77,8 @@ export class ContactsComponent implements AfterViewInit {
     }
   }
 
-  getAllContacts(): void {
+  getStore(): void {
     this.store.dispatch(fromActions.requestLoadContacts());
-    this.contacts$ = this.store.select(fromSelector.contacts);
 
     this.contacts$.subscribe(contacts => { this.totalRows = contacts.length; });
   }
@@ -118,21 +115,29 @@ export class ContactsComponent implements AfterViewInit {
       }
     );
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        const index = this.tableData.findIndex(object => {
-          return object.id === result.id;
-        });
-        this.tableData[index] = {...this.tableData[index], ...result};
+    dialogRef.afterClosed().subscribe(contact => {
+      this.store.dispatch(fromActions.updateContact(contact));
+      
+      // if (result) {
+      //   const index = this.tableData.findIndex(object => {
+      //     return object.id === result.id;
+      //   });
+      //   this.tableData[index] = {...this.tableData[index], ...result};
 
-        this.dataSource = new MatTableDataSource(this.tableData);
-      }
+      //   this.dataSource = new MatTableDataSource(this.tableData);
+      // }
     });
   }
 
-  deleteRecord(recordId: string): void {
-    this.tableData = this.tableData.filter(item => item.id !== recordId);
-    this.dataSource = new MatTableDataSource(this.tableData);
+  deleteRecord(recordId: number): void {
+    const r = confirm('Are you sure?');
+    if (r) {
+      this.store.dispatch(fromActions.deleteContact({id: recordId}));
+      this.contactsService.deleteContact(recordId).subscribe();
+    }
+    
+    // this.tableData = this.tableData.filter(item => item.id !== recordId);
+    // this.dataSource = new MatTableDataSource(this.tableData);
   }
 
   addRecord(): void {
@@ -143,11 +148,12 @@ export class ContactsComponent implements AfterViewInit {
       }
     );
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.tableData.push(result);
-        this.dataSource = new MatTableDataSource(this.tableData);
-      }
+    dialogRef.afterClosed().subscribe(contact => {
+      this.store.dispatch(fromActions.addContact(contact));
+      // if (contact) {
+      //   this.tableData.push(contact);
+      //   this.dataSource = new MatTableDataSource(this.tableData);
+      // }
     });
   }
 

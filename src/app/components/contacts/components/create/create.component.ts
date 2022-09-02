@@ -1,8 +1,11 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Store } from '@ngrx/store';
 import { DateService } from 'src/app/components/contacts/service/date.service';
+import { ContactsService } from '../../service/contacts.service';
 import { InputSocialNetwork } from '../../store/contact';
+import * as fromStore from '../../store/contacts.reducer';
 
 @Component({
   selector: 'app-create',
@@ -21,11 +24,13 @@ export class CreateComponent implements OnInit {
     public dialogRef: MatDialogRef<CreateComponent>,
     private formBuilder: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private dateService: DateService
+    private dateService: DateService,
+    private store: Store<fromStore.ContactState>,
+    private contactsService: ContactsService
   ) { }
 
   ngOnInit(): void {
-    this.createId = this.data.row.id || '0';
+    this.createId = this.data.row.id || 0;
 
     this.form = this.formBuilder.group({
       firstName: [this.data.row.firstName || '', Validators.required],
@@ -70,24 +75,52 @@ export class CreateComponent implements OnInit {
     this.dialogRef.close();
   }
 
+  getDirtyValues(form: any) {
+    let dirtyValues:any = {};
+
+    Object.keys(form.controls)
+        .forEach(key => {
+            let currentControl = form.controls[key];
+
+            if (currentControl.dirty || currentControl.value === 'feedback') {
+                if (currentControl.controls)
+                    dirtyValues[key] = this.getDirtyValues(currentControl);
+                else
+                    dirtyValues[key] = currentControl.value;
+            }
+        });
+
+    return dirtyValues;
+  }
+
   save(): void {
     if (this.form.valid) {
-      let data = {
-        id: this.createId,
-        updatedAt: [
-          this.dateService.getDateYMD(),
-          this.dateService.getTimeHM()
-        ]
-      }
+      if (this.data.modalName === 'Edit Contact') {     
+        let changesValue = {
+          ...this.getDirtyValues(this.form),
+          ...{
+            id: this.data.row.id,
+            updatedAt: [
+              this.dateService.getDateYMD(),
+              this.dateService.getTimeHM()
+            ]
+          }
+        };
+        let editCommunication = [];
 
-      if (this.data.modalName === 'Edit Contact') {
-        let updatedData = this.form.value;
-        data = {...data, ...updatedData};
+        if (changesValue.communication) {
+          for (var key of Object.keys(changesValue.communication)) {
+            editCommunication.push(changesValue.communication[key]);
+          }
 
-        this.dialogRef.close(data);
+          changesValue = {...changesValue, communication: editCommunication};
+        }
+
+        console.log('change');
+        this.contactsService.updateContact(changesValue).subscribe();
+        this.dialogRef.close(changesValue);
       } else {
         const updatedData = {
-          id: Math.floor(Math.random() * (444 - 0) + 0).toString(),
           firstName: this.form.value.firstName,
           middleName: this.form.value.middleName,
           lastName: this.form.value.lastName,
@@ -95,11 +128,16 @@ export class CreateComponent implements OnInit {
             this.dateService.getDateYMD(),
             this.dateService.getTimeHM()
           ],
+          updatedAt: [
+            this.dateService.getDateYMD(),
+            this.dateService.getTimeHM()
+          ],
           communication: this.form.value.communication
         }
-        data = {...data, ...updatedData}
 
-        this.dialogRef.close(data);
+        console.log('create');
+        this.contactsService.addContact(updatedData).subscribe();
+        this.dialogRef.close(updatedData);
       }
     }
   }

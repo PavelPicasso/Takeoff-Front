@@ -9,13 +9,23 @@ export const contactsFeatureKey = 'contacts';
 export interface ContactState extends EntityState<Contact> {
   isLoading: boolean;
   error: string | null;
+  selectedContactId: number | null;
 }
 
-export const adapter: EntityAdapter<Contact> = createEntityAdapter<Contact>();
+export function selectContactId(a: Contact): number {
+  return a.id as number;
+}
+
+export const adapter: EntityAdapter<Contact> = createEntityAdapter<Contact>(
+  {
+    selectId: selectContactId
+  }
+);
 
 export const initialState: ContactState = adapter.getInitialState({
   isLoading: true,
-  error: null
+  error: null,
+  selectedContactId: null
 });
 
 export const reducer = createReducer(
@@ -24,7 +34,7 @@ export const reducer = createReducer(
     (state, action) => adapter.addOne(action.contact, state)
   ),
   on(ContactActions.updateContact,
-    (state, action) => adapter.updateOne(action.contact, state)
+    (state, action) => adapter.updateOne(action.update, state)
   ),
   on(ContactActions.deleteContact,
     (state, action) => adapter.removeOne(action.id, state)
@@ -43,6 +53,8 @@ export const reducer = createReducer(
   )
 );
 
+export const getSelectedUserId = (state: ContactState) => state.selectedContactId;
+
 export const {
   selectIds,
   selectEntities,
@@ -52,3 +64,8 @@ export const {
 
 export const selectIsLoading = (state: ContactState) => state.isLoading;
 export const selectError = (state: ContactState) => state.error;
+
+export const selectUserIds = selectIds;
+export const selectUserEntities = selectEntities;
+export const selectAllUsers = selectAll;
+export const selectUserTotal = selectTotal;

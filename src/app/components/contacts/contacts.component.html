@@ -74,8 +74,10 @@
             <ng-container matColumnDef="options">
                 <th mat-header-cell *matHeaderCellDef>Options</th>
                 <td mat-cell *matCellDef="let row">
-                    <button class="btn red" (click)="deleteRecord(row.id)">Delete</button>
-                    <button class="btn" (click)="editRecord(row)">Edit</button>
+                    <div class="actions">
+                        <mat-icon (click)="deleteRecord(row.id)" color="warn">delete</mat-icon>
+                        <mat-icon (click)="editRecord(row)" color="primary">edit</mat-icon>
+                    </div>
                 </td>
             </ng-container>
     
@@ -99,6 +101,7 @@
                     [pageIndex]="currentPage"
                     [pageSize]="pageSize"
                     [pageSizeOptions]="pageSizeOptions"
+                    showFirstLastButtons
                     (page)="pageEvent = $event; onPaginateChange($event)"
                     aria-label="Select page">
       </mat-paginator>

@@ -4,11 +4,11 @@ export interface InputSocialNetwork {
 }
 
 export interface Contact {
-    id: string;
-    firstName: string;
-    middleName: string;
-    lastName: string;
-    createdAt: string[];
-    updatedAt: string[];
-    communication: InputSocialNetwork[];
+    id?: number;
+    firstName?: string;
+    middleName?: string;
+    lastName?: string;
+    createdAt?: string[];
+    updatedAt?: string[];
+    communication?: InputSocialNetwork[];
 }
